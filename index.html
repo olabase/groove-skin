@@ -1,22 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Groove – Video.js Skin</title>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.2.0/video.js"></script>
-  <style>
-    body { margin: 0; background: #1a1714; color: #f3e6c8; font-family: Georgia, serif; padding: 16px; }
-    h1 { text-align: center; }
-    video-skin { width: 100%; max-width: 720px; margin: 0 auto; display: block; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groove – a vinyl-inspired Video.js skin</title>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/video-player.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/container.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls-content.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls-group.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/play-button.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/time-slider.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-track.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-buffer.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-fill.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-thumb.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/time.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/time-group.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/time-separator.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/mute-button.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/fullscreen-button.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/hotkey.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/status-announcer.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/error-dialog.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/dialog-popup.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/dialog-title.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/dialog-description.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/dialog-close.js"></script>
+<style>
+:root{--ink:#14100c;--cream:#f3e6c8;--amber:#e8a33d}
+*{box-sizing:border-box}
+body{margin:0;padding:20px 16px 40px;background:var(--ink);color:var(--cream);font-family:Georgia,"Times New Roman",serif}
+h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
+.sub{text-align:center;margin:0 0 20px;opacity:.85}
+.groove{position:relative;display:block;max-width:720px;margin:0 auto;border:2px solid var(--amber);border-radius:16px;overflow:hidden;background:#000}
+.groove video{display:block;width:100%}
+.groove-controls{position:absolute;inset:auto 0 0;padding:12px 14px 14px;color:var(--cream);background:linear-gradient(to top,rgb(20 16 12 / .95),rgb(20 16 12 / .6) 60%,transparent);transition:opacity .25s}
+.groove-controls:not([data-visible]):not(:has(:focus-visible)){opacity:0}
+.groove :focus-visible{outline:3px solid var(--cream);outline-offset:3px}
+
+.groove-slider{position:relative;display:flex;align-items:center;height:28px;cursor:pointer}
+.groove-track{position:relative;width:100%;height:8px;border-radius:9999px;background:repeating-linear-gradient(90deg,#2b241c 0 3px,#3a3126 3px 4px)}
+.groove-buffer,.groove-fill{position:absolute;top:0;bottom:0;left:0;border-radius:inherit}
+.groove-buffer{width:var(--media-slider-buffer);background:rgb(243 230 200 / .25)}
+.groove-fill{width:var(--media-slider-fill);background:var(--amber)}
+.groove-thumb{position:absolute;left:var(--media-slider-fill);width:20px;height:20px;border-radius:50%;background:var(--amber);border:3px solid var(--cream);translate:-50% 0}
+
+.groove-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px}
+.groove-play{position:relative;flex:none;width:56px;height:56px;padding:0;border:0;background:none;cursor:pointer}
+.groove-play::before{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px var(--amber);
+  background:
+   radial-gradient(circle closest-side,var(--amber) 0 44%,#0c0a08 45% 48%,transparent 49%),
+   conic-gradient(from 0deg,transparent,rgb(255 255 255 / .16) 8%,transparent 18%,transparent 50%,rgb(255 255 255 / .16) 58%,transparent 68%),
+   repeating-radial-gradient(circle closest-side,#1c1814 0 2px,#2d261e 3px 4px)}
+.groove-play:not([data-paused])::before{animation:spin 3s linear infinite}
+.groove-play::after{content:"\25B6";position:absolute;inset:0;display:grid;place-items:center;padding-left:2px;font-size:13px;line-height:1;color:var(--ink)}
+.groove-play:not([data-paused])::after{content:"\275A\275A";padding-left:0;letter-spacing:-1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.groove-time{display:flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+.groove-btn{min-width:44px;min-height:44px;padding:0 12px;border:2px solid var(--cream);border-radius:9999px;background:rgb(20 16 12 / .6);color:var(--cream);font:inherit;font-size:.9rem;cursor:pointer}
+.groove-mute{margin-left:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.groove-play:not([data-paused]) .show-when-paused,
+.groove-play[data-paused] .show-when-playing,
+.groove-mute:not([data-muted]) .show-when-muted,
+.groove-mute[data-muted] .show-when-unmuted,
+.groove-full:not([data-fullscreen]) .show-when-fullscreen,
+.groove-full[data-fullscreen] .show-when-not-fullscreen{display:none}
+
+.groove-error{position:absolute;inset:0;display:grid;gap:12px;place-content:center;padding:24px;background:rgb(20 16 12 / .92);text-align:center}
+.groove-error:not([data-open]){display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .groove-play::before{animation:none!important}
+  .groove-controls{transition:none}
+}
+</style>
 </head>
 <body>
-  <h1>Groove</h1>
-  <video-player>
-    <video-skin style="aspect-ratio: 16 / 9">
-      <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" playsinline></video>
-    </video-skin>
-  </video-player>
+<h1>Groove</h1>
+<p class="sub">A vinyl-inspired video player</p>
+
+<video-player>
+  <media-container class="groove">
+    <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" playsinline></video>
+
+    <media-controls>
+      <media-controls-content class="groove-controls">
+        <media-time-slider class="groove-slider">
+          <media-slider-track class="groove-track">
+            <media-slider-buffer class="groove-buffer"></media-slider-buffer>
+            <media-slider-fill class="groove-fill"></media-slider-fill>
+          </media-slider-track>
+          <media-slider-thumb class="groove-thumb"></media-slider-thumb>
+        </media-time-slider>
+
+        <media-controls-group class="groove-row" aria-label="Playback controls">
+          <media-play-button class="groove-play">
+            <span class="sr show-when-paused">Play</span>
+            <span class="sr show-when-playing">Pause</span>
+          </media-play-button>
+
+          <media-time-group class="groove-time">
+            <media-time type="current"></media-time>
+            <media-time-separator></media-time-separator>
+            <media-time type="duration"></media-time>
+          </media-time-group>
+
+          <media-mute-button class="groove-btn groove-mute">
+            <span class="show-when-muted">Unmute</span>
+            <span class="show-when-unmuted">Mute</span>
+          </media-mute-button>
+
+          <media-fullscreen-button class="groove-btn groove-full">
+            <span class="show-when-fullscreen">Exit</span>
+            <span class="show-when-not-fullscreen">Full</span>
+          </media-fullscreen-button>
+        </media-controls-group>
+      </media-controls-content>
+    </media-controls>
+
+    <media-hotkey keys="Space" action="togglePaused"></media-hotkey>
+    <media-hotkey keys="m" action="toggleMuted"></media-hotkey>
+    <media-hotkey keys="f" action="toggleFullscreen"></media-hotkey>
+    <media-hotkey keys="ArrowLeft" action="seekStep" value="-5"></media-hotkey>
+    <media-hotkey keys="ArrowRight" action="seekStep" value="5"></media-hotkey>
+    <media-status-announcer></media-status-announcer>
+
+    <media-error-dialog>
+      <media-dialog-popup class="groove-error">
+        <media-dialog-title></media-dialog-title>
+        <media-dialog-description></media-dialog-description>
+        <media-dialog-close></media-dialog-close>
+      </media-dialog-popup>
+    </media-error-dialog>
+  </media-container>
+</video-player>
 </body>
-</html>
+  </html>
