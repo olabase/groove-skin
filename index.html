@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Groove – a vinyl-inspired Video.js skin</title>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/video-player.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/media/mux-video.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/container.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls-content.js"></script>
@@ -34,11 +35,11 @@ body{margin:0;padding:20px 16px 40px;background:var(--ink);color:var(--cream);fo
 h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 .sub{text-align:center;margin:0 0 20px;opacity:.85}
 .groove{position:relative;display:block;max-width:720px;margin:0 auto;border:2px solid var(--amber);border-radius:16px;overflow:hidden;background:#000}
-.groove video{display:block;width:100%}
+.groove video,.groove mux-video{display:block;width:100%;aspect-ratio:16/9}
 .groove-controls{position:absolute;inset:auto 0 0;padding:12px 14px 14px;color:var(--cream);background:linear-gradient(to top,rgb(20 16 12 / .95),rgb(20 16 12 / .6) 60%,transparent);transition:opacity .25s}
 .groove-controls:not([data-visible]):not(:has(:focus-visible)){opacity:0}
 .groove :focus-visible{outline:3px solid var(--cream);outline-offset:3px}
-.groove-btn{display:inline-flex;align-items:center;justify-content:center}
+
 .groove-slider{position:relative;display:flex;align-items:center;height:28px;cursor:pointer}
 .groove-track{position:relative;width:100%;height:8px;border-radius:9999px;background:repeating-linear-gradient(90deg,#2b241c 0 3px,#3a3126 3px 4px)}
 .groove-buffer,.groove-fill{position:absolute;top:0;bottom:0;left:0;border-radius:inherit}
@@ -59,7 +60,7 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .groove-time{display:flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
-.groove-btn{min-width:44px;min-height:44px;padding:0 12px;border:2px solid var(--cream);border-radius:9999px;background:rgb(20 16 12 / .6);color:var(--cream);font:inherit;font-size:.9rem;cursor:pointer}
+.groove-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 12px;border:2px solid var(--cream);border-radius:9999px;background:rgb(20 16 12 / .6);color:var(--cream);font:inherit;font-size:.9rem;cursor:pointer}
 .groove-mute{margin-left:auto}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -85,7 +86,7 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 
 <video-player>
   <media-container class="groove">
-    <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" playsinline></video>
+    <mux-video src="https://stream.mux.com/wVZLq3Fvkp3dNpo01V8Gvr7E23ZofCMXbLS02SMmK01bt8.m3u8" playsinline crossorigin="anonymous"></mux-video>
 
     <media-controls>
       <media-controls-content class="groove-controls">
@@ -139,4 +140,4 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
   </media-container>
 </video-player>
 </body>
-  </html>
+              </html>
