@@ -12,6 +12,7 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/controls-group.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/play-button.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/time-slider.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/volume-slider.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-track.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-buffer.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.3.0/ui/slider-fill.js"></script>
@@ -36,13 +37,14 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 .sub{text-align:center;margin:0 0 20px;opacity:.85}
 .groove{position:relative;display:block;max-width:720px;margin:0 auto;border:2px solid var(--amber);border-radius:16px;overflow:hidden;background:#000}
 .groove video,.groove mux-video{display:block;width:100%;aspect-ratio:16/9}
-.groove-controls{position:absolute;inset:auto 0 0;padding:12px 14px 14px;color:var(--cream);background:linear-gradient(to top,rgb(20 16 12 / .95),rgb(20 16 12 / .6) 60%,transparent);transition:opacity .25s}
-.groove-controls:not([data-visible]):not(:has(:focus-visible)){opacity:0}
-.groove :focus-visible{outline:3px solid var(--cream);outline-offset:3px}
 .groove{max-width:420px}
 .groove video,.groove mux-video{aspect-ratio:9/16}
 .groove:fullscreen video,.groove:fullscreen mux-video{width:100%;height:100%;aspect-ratio:auto}
 .groove:fullscreen{max-width:none;border:0;border-radius:0}
+.groove-controls{position:absolute;inset:auto 0 0;padding:12px 14px 14px;color:var(--cream);background:linear-gradient(to top,rgb(20 16 12 / .95),rgb(20 16 12 / .6) 60%,transparent);transition:opacity .25s}
+.groove-controls:not([data-visible]):not(:has(:focus-visible)){opacity:0}
+.groove :focus-visible{outline:3px solid var(--cream);outline-offset:3px}
+
 .groove-slider{position:relative;display:flex;align-items:center;height:28px;cursor:pointer}
 .groove-track{position:relative;width:100%;height:8px;border-radius:9999px;background:repeating-linear-gradient(90deg,#2b241c 0 3px,#3a3126 3px 4px)}
 .groove-buffer,.groove-fill{position:absolute;top:0;bottom:0;left:0;border-radius:inherit}
@@ -62,10 +64,19 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 .groove-play:not([data-paused])::after{content:"\275A\275A";padding-left:0;letter-spacing:-1px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+.groove-arm{position:absolute;top:-2px;left:62px;width:4px;height:42px;border-radius:2px;background:var(--cream);transform-origin:50% 2px;transition:transform .6s ease;pointer-events:none}
+.groove-arm::after{content:"";position:absolute;left:-3px;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--amber)}
+.groove-play[data-paused] .groove-arm{transform:rotate(-6deg)}
+.groove-play:not([data-paused]) .groove-arm{transform:rotate(28deg)}
+
 .groove-time{display:flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
 .groove-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 12px;border:2px solid var(--cream);border-radius:9999px;background:rgb(20 16 12 / .6);color:var(--cream);font:inherit;font-size:.9rem;cursor:pointer}
 .groove-mute{margin-left:auto}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.groove-vol-row{display:flex;align-items:center;gap:12px;margin-top:6px}
+.groove-vol-label{flex:none;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
+.groove-vol{position:relative;display:flex;align-items:center;flex:1;height:32px;cursor:pointer}
 
 .groove-play:not([data-paused]) .show-when-paused,
 .groove-play[data-paused] .show-when-playing,
@@ -79,6 +90,7 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
 
 @media (prefers-reduced-motion:reduce){
   .groove-play::before{animation:none!important}
+  .groove-arm{transition:none}
   .groove-controls{transition:none}
 }
 </style>
@@ -105,6 +117,7 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
           <media-play-button class="groove-play">
             <span class="sr show-when-paused">Play</span>
             <span class="sr show-when-playing">Pause</span>
+            <span class="groove-arm" aria-hidden="true"></span>
           </media-play-button>
 
           <media-time-group class="groove-time">
@@ -123,6 +136,16 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
             <span class="show-when-not-fullscreen">Full</span>
           </media-fullscreen-button>
         </media-controls-group>
+
+        <div class="groove-vol-row">
+          <span class="groove-vol-label" aria-hidden="true">Vol</span>
+          <media-volume-slider class="groove-vol">
+            <media-slider-track class="groove-track">
+              <media-slider-fill class="groove-fill"></media-slider-fill>
+            </media-slider-track>
+            <media-slider-thumb class="groove-thumb"></media-slider-thumb>
+          </media-volume-slider>
+        </div>
       </media-controls-content>
     </media-controls>
 
@@ -131,6 +154,8 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
     <media-hotkey keys="f" action="toggleFullscreen"></media-hotkey>
     <media-hotkey keys="ArrowLeft" action="seekStep" value="-5"></media-hotkey>
     <media-hotkey keys="ArrowRight" action="seekStep" value="5"></media-hotkey>
+    <media-hotkey keys="ArrowUp" action="volumeStep" value="0.05"></media-hotkey>
+    <media-hotkey keys="ArrowDown" action="volumeStep" value="-0.05"></media-hotkey>
     <media-status-announcer></media-status-announcer>
 
     <media-error-dialog>
@@ -143,4 +168,4 @@ h1{text-align:center;margin:8px 0 4px;font-size:2rem;letter-spacing:.08em}
   </media-container>
 </video-player>
 </body>
-              </html>
+                                                  </html>
